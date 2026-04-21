@@ -53,4 +53,21 @@ class CartItem(Base):
     product = relationship("Product", back_poplates="cart_items")
   
 
+class Order(Base):
+    __tablename__="orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    total_amount = Column(Float, nullable=False)
+    status = Column(String(50), default="pending", nullable=False)
+    payment_reference = Column(String(255), nullable=True, unique=True)
+    mpesa_checkout_request_id = Column(String(255), nullable=True)
+    delivery_address = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="orders")
+    order_items = relationship("orderItem", back_populates="order", cascade="all, delete-orphan")
+
+    
+
   
