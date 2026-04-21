@@ -23,4 +23,22 @@ class User(Base):
 
     cart_items = relationship("CartItem", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user")
+
+class Product(Base):
+    __tablename__="products"
+
+    id = Column(Interger, primary_key=True, index=True)
+    name = Column(String(255),nullable=False, index=True)
+    category = Column(String(100), nullable=False, index=True)
+    description = Column(Text, nullable=True)
+    price = Column(Float, nullable=False)
+    image_url= Column(String(500), nullable=True)
+    stock = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    cart_items = relationship("CartItem", back_populates="product")
+    order_items = relationship("OrderItem", back_populates="product")
+  
+
   
