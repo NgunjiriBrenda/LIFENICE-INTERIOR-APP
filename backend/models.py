@@ -39,6 +39,18 @@ class Product(Base):
 
     cart_items = relationship("CartItem", back_populates="product")
     order_items = relationship("OrderItem", back_populates="product")
+
+class CartItem(Base):
+    __tablename__ = "cart"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE", nullable=False))
+    product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    quality = Column(Integer, default=1, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="cart_items")
+    product = relationship("Product", back_poplates="cart_items")
   
 
   
