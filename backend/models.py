@@ -68,6 +68,19 @@ class Order(Base):
     user = relationship("User", back_populates="orders")
     order_items = relationship("orderItem", back_populates="order", cascade="all, delete-orphan")
 
+
+class OrderItem(Base):
+    __tablename__ = "order items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id", ondelete="SET NULL"), nullable=True)
+    quantity = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
+
+    order = relationship("Order", back_populate="order_items")
+    product = relationship("Product", back_populates="order_items")
+
     
 
   
