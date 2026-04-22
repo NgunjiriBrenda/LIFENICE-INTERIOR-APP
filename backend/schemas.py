@@ -41,5 +41,31 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: Optional[int] = None
 
+class ProductCreate(BaseModel):
+    name: str
+    category: str
+    description: Optional[str] = None
+    price: float
+    image_url: Optional[str] = None
+    stock: int = 0
+
+    @field_validator("price")
+    @classmethod
+    def price_must_be_positive(cls, v):
+        if v <= 0:
+            raise ValueError("Price must be greater than 0")
+
+        return v
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] =  None
+    price: Optional[float] = None
+    image_url: Optional[str] = None
+    stock: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
 
 
