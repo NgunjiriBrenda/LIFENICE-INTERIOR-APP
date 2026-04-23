@@ -151,6 +151,13 @@ class PaymentResponse(BaseModel):
     checkout_request_id: Optional[str] = None
     order_id: Optional[int] = None
 
+class AdminDashboardStats():
+    total_users: int
+    total_products: int
+    total_orders: int
+    total_revenue: float
+    pending_orders: int
+    low_stock_products: int
 
 
 
