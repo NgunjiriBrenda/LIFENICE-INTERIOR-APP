@@ -43,3 +43,16 @@ def list_products(
     return query.offset(skip).limit(limit).all()
 
 
+@router.get("/categories")
+def list_categories(db: Session = Depends(get_db)):
+    results = (
+        db.query(Product.category, func.count(Product.id).label("count"))
+        .filter(Product.is_active == True)
+        .group_by(Product.category)
+        .all()
+    )
+    return [{"name": row.category, "product_count": row.count} for row in results]
+
+@
+
+
