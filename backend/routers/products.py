@@ -64,4 +64,18 @@ def get_products(product_id: int, db: Session = Depends(get_db)):
 
     return product
 
+@admin_router.post("/products", response_model=ProductOut, status_code=201)
+def create_product(
+    product_data: ProductCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+):
+
+    product = Product(**product_data.model_dump())
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    return product
+
+@
 
