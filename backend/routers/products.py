@@ -53,6 +53,15 @@ def list_categories(db: Session = Depends(get_db)):
     )
     return [{"name": row.category, "product_count": row.count} for row in results]
 
-@
+@router.get("/{product_id}", response_model=ProductOut)
+def get_products(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(
+        Product.id == product_id,
+        Product.is_active == True
+    ).first()
+    if not product:
+        rause HTTPException(status_code=404, detail="Product not found")
+
+    return product
 
 
