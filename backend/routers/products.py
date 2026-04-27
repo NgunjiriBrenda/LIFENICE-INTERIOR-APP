@@ -16,13 +16,13 @@ def list_products(
     category: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
     min_price: Optional[float] = Query(None),
-    max_price: Optional(float) = Query(None),
-    in_stock: Optional(bool) = Query(None),
+    max_price: Optional[float] = Query(None),
+    in_stock: Optional[bool] = Query(None),
     skip: int = 0,
     limit: int = 20,
     db: Session = Depends(get_db)
  
-);
+)
     query = db.query(Product).filter(Product.is_active == True)
 
     if category:
@@ -77,5 +77,25 @@ def create_product(
     db.refresh(product)
     return product
 
-@
+@admin_router.put("/products/{product_id}", response_model=ProductOut)
+def update_product(
+    product_id: int,
+    product_data: ProductUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+    
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    update_data = product_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(product, field, value)
+
+    db.commit()
+    db.refresh(product)
+    return product
+
+    
 
