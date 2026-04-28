@@ -97,5 +97,42 @@ def update_product(
     db.refresh(product)
     return product
 
-    
+@admin_router.delete("/products/{product_id}", status_code=204)
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    product.is_active=False
+    db.commit()
+
+@admin_router.get("/products", response_model=List[ProductOut])
+def admin_list_all_products(
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+):
+    return db.query(Product).all()
+
+@admin_router.patch("/products/{product_id}/restock")
+def restock_product(
+    product_id: int,
+    quantity: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    product.stock+= quantity
+    db.commit()
+    return {"message": f"Stock updated. New stock: {product.stock}"}
+
+
+
+
+
 
