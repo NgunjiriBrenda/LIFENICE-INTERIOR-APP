@@ -6,7 +6,7 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str
     full_name: Optional[str] = None
-    phone_number: Optonal[str] = None
+    phone_number: Optional [str] = None
 
     @field_validator("password")
     @classmethod

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastApi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
@@ -22,7 +22,7 @@ def list_products(
     limit: int = 20,
     db: Session = Depends(get_db)
  
-)
+):
     query = db.query(Product).filter(Product.is_active == True)
 
     if category:
@@ -60,7 +60,7 @@ def get_products(product_id: int, db: Session = Depends(get_db)):
         Product.is_active == True
     ).first()
     if not product:
-        rause HTTPException(status_code=404, detail="Product not found")
+        raise HTTPException(status_code=404, detail="Product not found")
 
     return product
 
@@ -131,6 +131,30 @@ def restock_product(
     db.commit()
     return {"message": f"Stock updated. New stock: {product.stock}"}
 
+
+@admin_router.get("/dashboard", response_model=AdminDashboardStats)
+def admin_dashboard(
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user)
+
+):
+    from models import Order, User as UserModel
+
+    total_users = db.query(func.count(UserModel.id)).scalar()
+    total_products = db.query(func.count(Product,id)).filter(Product.is_active == True).scalar()
+    total_orders = db.query(func.count(Order.id)).scalar()
+    total_revenue = db.query(func.sum(Order.total_amount)).filter(Order.statuss == "paid").scalar() or 0.0
+    pending_orders = db.query(func.count(Order.id)).filter(Order.status == "pending").scalar()
+    low_stock = db.query(func.count(Product.id)).filter(Product.stock <= 5, Product.is_active == True).scalar()
+
+    return AdminDashboardStats(
+        total_users=total_users,
+        total_products=total_products,
+        total_orders=total_orders,
+        total_revenue=total_revenue,
+        pending_orders=pending_orders,
+        low_stock=low_stock
+    )
 
 
 

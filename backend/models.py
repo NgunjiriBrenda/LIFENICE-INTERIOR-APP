@@ -5,14 +5,14 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-form database import Base
+from database import Base
 import enum
 
 
 class User(Base):
     __tablename__="users"
 
-    id = Column(Interger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=True)
@@ -27,7 +27,7 @@ class User(Base):
 class Product(Base):
     __tablename__="products"
 
-    id = Column(Interger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255),nullable=False, index=True)
     category = Column(String(100), nullable=False, index=True)
     description = Column(Text, nullable=True)
